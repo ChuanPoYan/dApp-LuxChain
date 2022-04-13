@@ -69,7 +69,7 @@ App = {
           }
         )
         .watch(function(error, event) {
-          console.log("event triggered", event.args.tokenId);
+          console.log("event triggered", event.args);
         });
     });
   },
@@ -79,13 +79,34 @@ App = {
     $(document).on("click", "#btn-owner", App.tokenOwner);
     $(document).on("click", "#btn-tran", App.transferToken);
     $(document).on("click", "#btn-serial", App.tokenSerial);
-    $(document).on("click", "#btn-list", App.listTokens);
+    $(document).on("click", "#btn-supply", App.getSupply);
     $(document).on("click", "#btn-id", App.getTokenId);
     $(document).on("click", "#btn-report", App.reportLost);
     $(document).on("click", "#btn-check", App.checkState);
     $(document).on("click", "#btn-invalid", App.invalidateToken);
+    $(document).on("click", "#btn-restore", App.restoreToken);
     window.ethereum.on('accountsChanged', function (accounts) {
       window.location.reload();
+    })
+  },
+  getSupply: async function() {
+    App.contracts.LuxChain.deployed().
+    then((instance) => {
+      return instance.getTotalSupply()
+    })
+    .then((res) => {
+      document.getElementById("supply").innerHTML = res;
+    })
+  },
+  restoreToken: async function() {
+    var tkid = document.getElementById("restore").value;
+    App.contracts.LuxChain.deployed().
+    then((instance) => {
+      return instance.restoreToken(tkid, { from: App.account})
+    })
+    .then((mess) => {
+      // console.log(mess)
+      alert("Restore the lost Token")
     })
   },
   invalidateToken: async function() {
@@ -148,10 +169,13 @@ App = {
         });
       })
       .then((mess) => {
-        alert("A token is minted to" + mess.receipt.to)
         document.getElementById("tk-name").value = " ";
         document.getElementById("tk-to").value = " ";
         document.getElementById("tk-ser").value = " ";
+        return luxInstance.getTotalSupply()
+      })
+      .then((res) => {
+        alert("A token is minted, id is " + (res-1))
       })
       .catch(function(err) {
         console.log(err.message);
@@ -188,7 +212,7 @@ App = {
       })
       .then(function(ser) {
         return (document.getElementById("tk-serial").innerHTML =
-          "The token serial number is:" + ser);
+          "The token serial number is: " + ser);
       })
       .catch(function(err) {
         console.log(err.message);
@@ -212,14 +236,14 @@ App = {
       });
   },
 
-  listTokens: async function() {
-    App.contracts.LuxChain.deployed().then(function(instance) {
-      return instance.getTokenList()
-    }).then(instance => {
-      const idlist = instance;
-      console.log(idlist)
-    })
-  }
+//   listTokens: async function() {
+//     App.contracts.LuxChain.deployed().then(function(instance) {
+//       return instance.getTokenList()
+//     }).then(instance => {
+//       const idlist = instance;
+//       console.log(idlist)
+//     })
+//   }
 };
 
 $(function() {

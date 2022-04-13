@@ -46,7 +46,6 @@ contract LuxChain is ERC721 {
     }
 
     modifier timedDestory(uint256 _tokenId) {
-        require(tokens[_tokenId].state == stages.normal, "Token is abnormal");
         if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 8 days) {
             tokens[_tokenId].state = stages.invalidate;
             super._burn(_tokenId);
@@ -74,33 +73,33 @@ contract LuxChain is ERC721 {
         emit mintToken(_to, _serialNumber, _supply);
     }
 
-    function invalidateToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId){
+    function invalidateToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId) stateoftoken(_tokenId) {
         tokens[_tokenId].state = stages.invalidating;
         tokens[_tokenId].time = block.timestamp;
         emit invalidToken(_tokenId);
     }
 
-    function reportlost(uint256 _tokenId) public adminOrOwnerOnly(_tokenId) stateoftoken(_tokenId) {
+    function reportlost(uint256 _tokenId) public adminOrOwnerOnly(_tokenId) stateoftoken(_tokenId) timedDestory(_tokenId) {
         tokens[_tokenId].state = stages.lost;
         emit tokenLost(_tokenId);
     }
 
-    function restoreToken(uint256 _tokenId) public adminOnly validToken(_tokenId) {
+    function restoreToken(uint256 _tokenId) public adminOnly validToken(_tokenId) timedDestory(_tokenId) {
         tokens[_tokenId].state = stages.normal;
         emit tokenrestored(_tokenId);
     }
 
-    function checkState(uint256 _tokenId) public view returns(stages) {
+    function checkState(uint256 _tokenId) public view returns(stages)  {
         return tokens[_tokenId].state;
     }
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) public override adminOrOwnerOnly(_tokenId) stateoftoken(_tokenId) {
+    function transferFrom(address _from, address _to, uint256 _tokenId) public override timedDestory(_tokenId) adminOrOwnerOnly(_tokenId) stateoftoken(_tokenId) {
         super.transferFrom(_from, _to, _tokenId);
         tokens[_tokenId].information = '';
         emit transferEvent(_from, _to, _tokenId);
     }
 
-    function updateInformation(uint256 _tokenId, string memory _information) public adminOrOwnerOnly(_tokenId) {
+    function updateInformation(uint256 _tokenId, string memory _information) public adminOrOwnerOnly(_tokenId) timedDestory(_tokenId) {
         tokens[_tokenId].information = _information;
     }
 
