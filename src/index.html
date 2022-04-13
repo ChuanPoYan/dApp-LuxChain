@@ -31,25 +31,37 @@
 
       <!-- <div id="loading">The web is loading</div> -->
       <div id="content">
+        <div class="mytokens">
+          <button id="btn-list">List</button>
+          <p id="listtokens"></p>
+        </div>
+        </div>
         <div class="box">
           <div>
             <label class="tk-name">Token name</label>
-            <input id="tk-name" />
+            <input id="tk-name" placeholder="Token's name" />
           </div>
           <div>
             <label class="tk-to">Token to</label>
-            <input id="tk-to" />
+            <input id="tk-to" placeholder="Address the token is minted to"/>
           </div>
           <div>
             <label class="tk-ser">Token serial number</label>
-            <input id="tk-ser" />
+            <input id="tk-ser" placeholder="Tokens serial number" />
           </div>
-          <button id="btn-mint">mint the token</button>
+          <button id="btn-mint">mint the token(Only Admin)</button>
+        </div>
+
+        <div class="box">
+          <input id="invalidate" placeholder="Token id" />
+            <button id="btn-invalid">
+              Invalidate Token
+            </button>
         </div>
 
         <div class="box">
           <div id="checkowner" class="row">
-            <input id="ownerof" />
+            <input id="ownerof" placeholder="Token id"/>
             <button id="btn-owner">get the token owner</button>
             <p id="tk-owner">The owner address is:</p>
           </div>
@@ -57,7 +69,7 @@
 
         <div class="box">
           <div id="checkser" class="row">
-            <input id="serof" />
+            <input id="serof" placeholder="Token id"/>
             <button id="btn-serial">
               get the token serial number
             </button>
@@ -67,13 +79,35 @@
         <div class="box">
           <div>
             <label class="tk-to">Token transfer to</label>
-            <input id="tk-tranto" />
+            <input id="tk-tranto" placeholder="Address transfer to"/>
           </div>
           <div>
             <label class="tk">Token ID</label>
-            <input id="tk-id" />
+            <input id="tk-id" placeholder="Token id"/>
           </div>
           <button id="btn-tran">Transfer token</button>
+        </div>
+
+        <div class="box">
+          <input id="idof" placeholder="Serial Number" />
+            <button id="btn-id">
+              get the token id
+            </button>
+            <p id="tkid">The token id is:</p>
+        </div>
+
+        <div class="box">
+          <input id="report" placeholder="Token id" />
+            <button id="btn-report">
+              Report Lost
+            </button>
+        </div>
+
+        <div class="box">
+          <input id="check" placeholder="Token id" />
+            <button id="btn-check">
+              Check State
+            </button>
         </div>
       </div>
     </div>

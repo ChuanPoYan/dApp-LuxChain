@@ -38,7 +38,7 @@ App = {
     web3.eth.getCoinbase(function(err, account) {
       if (err === null) {
         App.account = account;
-        console.log(account);
+        // console.log(account);
       }
     });
 
@@ -79,6 +79,60 @@ App = {
     $(document).on("click", "#btn-owner", App.tokenOwner);
     $(document).on("click", "#btn-tran", App.transferToken);
     $(document).on("click", "#btn-serial", App.tokenSerial);
+    $(document).on("click", "#btn-list", App.listTokens);
+    $(document).on("click", "#btn-id", App.getTokenId);
+    $(document).on("click", "#btn-report", App.reportLost);
+    $(document).on("click", "#btn-check", App.checkState);
+    $(document).on("click", "#btn-invalid", App.invalidateToken);
+    window.ethereum.on('accountsChanged', function (accounts) {
+      window.location.reload();
+    })
+  },
+  invalidateToken: async function() {
+    var tkid = document.getElementById("invalidate").value;
+    App.contracts.LuxChain.deployed().
+    then((instance) => {
+      return instance.invalidateToken(tkid, { from: App.account})
+    })
+    .then((mess) => {
+      console.log(mess)
+      alert("Invalidate Token")
+    })
+  },
+  checkState: async function() {
+    var tkid = document.getElementById("check").value;
+    const states = ["normal", "lost", "invalidating", "invalidate"]
+    App.contracts.LuxChain.deployed()
+    .then(function(instance) {
+      return instance.checkState(tkid)
+    })
+    .then((state) => {
+      console.log(state)
+      alert("State of token is " + states[state])
+    })
+  },
+  reportLost: async function() {
+    var tkid = document.getElementById("report").value;
+    App.contracts.LuxChain.deployed().
+    then((instance) => {
+      return instance.reportlost(tkid, { from: App.account})
+    })
+    .then((mess) => {
+      console.log(mess)
+      alert("Report lost")
+    })
+  },
+  getTokenId: async function() {
+    var tkser = document.getElementById("idof").value;
+    App.contracts.LuxChain.deployed()
+    .then(function(instance) {
+      console.log(instance)
+      return instance.viewTokenId(tkser)
+    })
+    .then((add) => {
+      (document.getElementById("tkid").innerHTML =
+          "The token id is:" + add);
+    })
   },
 
   mintToken: async function() {
@@ -93,7 +147,8 @@ App = {
           from: App.account,
         });
       })
-      .then(() => {
+      .then((mess) => {
+        alert("A token is minted to" + mess.receipt.to)
         document.getElementById("tk-name").value = " ";
         document.getElementById("tk-to").value = " ";
         document.getElementById("tk-ser").value = " ";
@@ -111,7 +166,7 @@ App = {
         return instance.ownerOf(tkid);
       })
       .then(function(add) {
-        console.log("test2");
+        // console.log(add);
         return (document.getElementById("tk-owner").innerHTML =
           "The owner address is:" + add);
       })
@@ -120,7 +175,7 @@ App = {
           alert("There is no such token.");
           document.getElementById("ownerof").value = " ";
         }
-        console.log(err.message);
+        console.log(err);
       });
   },
 
@@ -156,6 +211,15 @@ App = {
         console.log(err.message);
       });
   },
+
+  listTokens: async function() {
+    App.contracts.LuxChain.deployed().then(function(instance) {
+      return instance.getTokenList()
+    }).then(instance => {
+      const idlist = instance;
+      console.log(idlist)
+    })
+  }
 };
 
 $(function() {

@@ -68,7 +68,7 @@ contract("LuxChain", function (accounts) {
       result.push(bagName);
     }
 
-    console.log(result);
+    // console.log(result);
 
     let expected = ["LolBag", "Bag#2", "Bag#3", "Bag#4"];
     assert.equal(result.join(","), expected.join(","));
@@ -81,11 +81,11 @@ contract("LuxChain", function (accounts) {
     let result = [];
     for (var i = 0; i < totalSupply; i++) {
       bagId = await LuxChainInstance.viewSerialNumber(i);
-      console.log(bagId);
+      // console.log(bagId);
       result.push(bagId);
     }
 
-    console.log(result);
+    // console.log(result);
 
     let expected = ["12345678", "12345999", "73648374", "129309320"];
     assert.equal(result.join(","), expected.join(","));
@@ -93,7 +93,7 @@ contract("LuxChain", function (accounts) {
 
   it("Transfer ownership of tokenn", async () => {
     //   await LuxChainInstance.approve(accounts[2], 0, {from: accounts[1]})
-    console.log("Calling approve");
+    // console.log("Calling approve");
     // console.log(await LuxChainInstance.ownerOf(0));
     let transfer_1 = await LuxChainInstance.transferFrom(
       accounts[1],
@@ -112,5 +112,14 @@ contract("LuxChain", function (accounts) {
     assert.equal(await LuxChainInstance.ownerOf(0), accounts[2]);
     assert.equal(await LuxChainInstance.ownerOf(2), accounts[4]);
     //   truffleAssert.eventEmitted(transfer_2, "transferEvent");
+  });
+
+  it("Report lost", async () => {
+    
+    let lost_1 = await LuxChainInstance.reportlost(0, { from: accounts[2] })
+    truffleAssert.eventEmitted(lost_1, "tokenLost");
+    assert.equal(await LuxChainInstance.checkState(0), 1);
+
+    // let lost_2 = await LuxChainInstance.reportlost(2, { from: accounts[2] })
   });
 });
