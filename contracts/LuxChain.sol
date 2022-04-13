@@ -46,7 +46,6 @@ contract LuxChain is ERC721 {
     }
 
     modifier timedDestory(uint256 _tokenId) {
-        require(tokens[_tokenId].state == stages.normal, "Token is abnormal");
         if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 8 days) {
             tokens[_tokenId].state = stages.invalidate;
             super._burn(_tokenId);
@@ -74,7 +73,7 @@ contract LuxChain is ERC721 {
         emit mintToken(_to, _serialNumber, _supply);
     }
 
-    function invalidateToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId){
+    function invalidateToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId) stateoftoken(_tokenId) {
         tokens[_tokenId].state = stages.invalidating;
         tokens[_tokenId].time = block.timestamp;
         emit invalidToken(_tokenId);
