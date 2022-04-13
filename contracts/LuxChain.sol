@@ -89,7 +89,7 @@ contract LuxChain is ERC721 {
         emit tokenrestored(_tokenId);
     }
 
-    function checkState(uint256 _tokenId) public view returns(stages) timedDestory(_tokenId) {
+    function checkState(uint256 _tokenId) public view returns(stages) {
         return tokens[_tokenId].state;
     }
 
@@ -104,7 +104,6 @@ contract LuxChain is ERC721 {
     }
 
     function viewSerialNumber(uint256 _tokenId)
-        timedDestory(_tokenId)
         public
         view
         returns (string memory)
@@ -112,7 +111,7 @@ contract LuxChain is ERC721 {
         return tokens[_tokenId].serialNumber;
     }
 
-    function viewName(uint256 _tokenId) public view timedDestory(_tokenId) returns (string memory) {
+    function viewName(uint256 _tokenId) public view returns (string memory) {
         return tokens[_tokenId].name;
     }
 
