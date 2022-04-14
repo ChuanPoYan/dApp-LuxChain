@@ -241,20 +241,20 @@ App = {
     var luxInstance;
     const mytokens = [];
     document.getElementById("listToken").innerHTML = "";
-    listItem = document.createElement('li')
     App.contracts.LuxChain.deployed().then(function(instance) {
       luxInstance = instance;
       return instance.getTotalSupply()
-    }).then(instance => {
+    }).then(async(instance) => {
       for (var i = 0; i < instance; i++) {
-        luxInstance.ownerOf(i).then((add) => {
+        var add = await luxInstance.ownerOf(i)
           if (add = App.account) {
+            listItem = document.createElement('li')
             listItem.innerHTML = "Token " + i;
             document.getElementById("listToken").appendChild(listItem)
           }
-        })
         }
-      })
+        })
+
     
     
   }
