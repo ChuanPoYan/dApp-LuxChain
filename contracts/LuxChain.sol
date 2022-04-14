@@ -41,17 +41,21 @@ contract LuxChain is ERC721 {
     }
 
     modifier validToken(uint256 tokenId) {
-        require(tokens[tokenId].state == stages.invalidate, "Token is invalidated already");
+        require(tokens[tokenId].state != stages.invalidate, "Token is invalidated already");
         _;
     }
 
     modifier timedDestory(uint256 _tokenId) {
         if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 30 seconds) {
-            tokens[_tokenId].state = stages.invalidate;
-            super._burn(_tokenId);
-            emit tokendestory(_tokenId);
+            invalidated(_tokenId);
         }
         _;
+    }
+
+    function invalidated(uint256 _tokenId) internal {
+        tokens[_tokenId].state = stages.invalidate;
+        super._burn(_tokenId);
+        emit tokendestory(_tokenId);
     }
 
     modifier adminOnly {
