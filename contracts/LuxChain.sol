@@ -41,7 +41,7 @@ contract LuxChain is ERC721 {
     }
 
     modifier validToken(uint256 tokenId) {
-        require(tokens[tokenId].state != stages.invalidate, "Token is invalidated already");
+        require(tokens[tokenId].state == stages.invalidate, "Token is invalidated already");
         _;
     }
 
