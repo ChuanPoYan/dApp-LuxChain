@@ -86,6 +86,7 @@ App = {
     $(document).on("click", "#btn-invalid", App.invalidateToken);
     $(document).on("click", "#btn-restore", App.restoreToken);
     $(document).on("click", "#btn-list", App.listTokens);
+    $(document).on("click", "#btn-invalidated", App.invalidatedToken);
     window.ethereum.on('accountsChanged', function (accounts) {
       window.location.reload();
     })
@@ -119,6 +120,17 @@ App = {
     .then((mess) => {
       console.log(mess)
       alert("Invalidate Token")
+    })
+  },
+  invalidatedToken: async function() {
+    var tkid = document.getElementById("invalidated").value;
+    App.contracts.LuxChain.deployed().
+    then((instance) => {
+      return instance.invalidated(tkid, { from: App.account})
+    })
+    .then((mess) => {
+      console.log(mess)
+      alert("Token is invalidated")
     })
   },
   checkState: async function() {
