@@ -136,13 +136,13 @@ contract("LuxChain", function (accounts) {
   });
 
   it("Invalidate the token only by admin", async () => {
-    // admin can restore the token
+    // admin can invalidate the token
     await LuxChainInstance.restoreToken(0, { from: accounts[0] })
     let invalidate_1 = await LuxChainInstance.invalidateToken(0, { from: accounts[0] })
     truffleAssert.eventEmitted(invalidate_1, "invalidToken");
     assert.equal(await LuxChainInstance.checkState(0), 2);
 
-    // revert the restore not from admin
+    // revert the invalidate not from admin
     await truffleAssert.reverts(LuxChainInstance.invalidateToken(2, { from: accounts[2] }), "Admin only function")
   });
 
