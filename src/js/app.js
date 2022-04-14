@@ -85,6 +85,7 @@ App = {
     $(document).on("click", "#btn-check", App.checkState);
     $(document).on("click", "#btn-invalid", App.invalidateToken);
     $(document).on("click", "#btn-restore", App.restoreToken);
+    $(document).on("click", "#btn-list", App.listTokens);
     window.ethereum.on('accountsChanged', function (accounts) {
       window.location.reload();
     })
@@ -236,14 +237,27 @@ App = {
       });
   },
 
-//   listTokens: async function() {
-//     App.contracts.LuxChain.deployed().then(function(instance) {
-//       return instance.getTokenList()
-//     }).then(instance => {
-//       const idlist = instance;
-//       console.log(idlist)
-//     })
-//   }
+  listTokens: async function() {
+    var luxInstance;
+    const mytokens = [];
+    document.getElementById("listToken").innerHTML = "";
+    App.contracts.LuxChain.deployed().then(function(instance) {
+      luxInstance = instance;
+      return instance.getTotalSupply()
+    }).then(async(instance) => {
+      for (var i = 0; i < instance; i++) {
+        var add = await luxInstance.ownerOf(i)
+          if (add = App.account) {
+            listItem = document.createElement('li')
+            listItem.innerHTML = "Token " + i;
+            document.getElementById("listToken").appendChild(listItem)
+          }
+        }
+        })
+
+    
+    
+  }
 };
 
 $(function() {

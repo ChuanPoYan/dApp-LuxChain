@@ -83,12 +83,12 @@ contract LuxChain is ERC721 {
         emit invalidToken(_tokenId);
     }
 
-    function reportlost(uint256 _tokenId) public adminOrOwnerOnly(_tokenId) stateoftoken(_tokenId) timedDestory(_tokenId) {
+    function reportlost(uint256 _tokenId) public adminOrOwnerOnly(_tokenId) timedDestory(_tokenId) stateoftoken(_tokenId) {
         tokens[_tokenId].state = stages.lost;
         emit tokenLost(_tokenId);
     }
 
-    function restoreToken(uint256 _tokenId) public adminOnly validToken(_tokenId) timedDestory(_tokenId) {
+    function restoreToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId) validToken(_tokenId)  {
         tokens[_tokenId].state = stages.normal;
         emit tokenrestored(_tokenId);
     }
