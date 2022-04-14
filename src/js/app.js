@@ -259,7 +259,7 @@ App = {
     }).then(async(instance) => {
       for (var i = 0; i < instance; i++) {
         var add = await luxInstance.ownerOf(i)
-          if (add = App.account) {
+          if (add == App.account) {
             listItem = document.createElement('li')
             listItem.innerHTML = "Token " + i;
             document.getElementById("listToken").appendChild(listItem)
