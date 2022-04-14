@@ -51,10 +51,10 @@ contract("LuxChain", function (accounts) {
     );
     const totalSupply = await LuxChainInstance.getTotalSupply();
     assert.equal(totalSupply, 4);
-    console.log(minted_token_1);
-    console.log(minted_token_2);
-    console.log(minted_token_3);
-    console.log(minted_token_4);
+    // console.log(minted_token_1);
+    // console.log(minted_token_2);
+    // console.log(minted_token_3);
+    // console.log(minted_token_4);
   });
 
   it("list token names", async () => {
@@ -114,12 +114,36 @@ contract("LuxChain", function (accounts) {
     //   truffleAssert.eventEmitted(transfer_2, "transferEvent");
   });
 
-  it("Report lost", async () => {
+  it("Report lost only by owner and admin", async () => {
     
     let lost_1 = await LuxChainInstance.reportlost(0, { from: accounts[2] })
     truffleAssert.eventEmitted(lost_1, "tokenLost");
     assert.equal(await LuxChainInstance.checkState(0), 1);
 
-    // let lost_2 = await LuxChainInstance.reportlost(2, { from: accounts[2] })
+    // revert the report not from owner or admin
+    await truffleAssert.reverts(LuxChainInstance.reportlost(2, { from: accounts[2] }), "Admin or owner only function")
   });
+
+  it("Restore the token only by admin", async () => {
+    // admin can restore the token
+    let restore_1 = await LuxChainInstance.restoreToken(0, { from: accounts[0] })
+    truffleAssert.eventEmitted(restore_1, "tokenrestored");
+    assert.equal(await LuxChainInstance.checkState(0), 0);
+
+    // revert the restore not from admin
+    await LuxChainInstance.reportlost(0, { from: accounts[2] })
+    await truffleAssert.reverts(LuxChainInstance.restoreToken(0, { from: accounts[2] }), "Admin only function")
+  });
+
+  it("Invalidate the token only by admin", async () => {
+    // admin can restore the token
+    await LuxChainInstance.restoreToken(0, { from: accounts[0] })
+    let invalidate_1 = await LuxChainInstance.invalidateToken(0, { from: accounts[0] })
+    truffleAssert.eventEmitted(invalidate_1, "invalidToken");
+    assert.equal(await LuxChainInstance.checkState(0), 2);
+
+    // revert the restore not from admin
+    await truffleAssert.reverts(LuxChainInstance.invalidateToken(2, { from: accounts[2] }), "Admin only function")
+  });
+
 });
