@@ -46,9 +46,8 @@ contract LuxChain is ERC721 {
     }
 
     modifier timedDestory(uint256 _tokenId) {
-        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 30 seconds) {
+        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 30 seconds) 
             invalidated(_tokenId);
-        }
         _;
     }
 
