@@ -46,14 +46,18 @@ contract LuxChain is ERC721 {
     }
 
     modifier timedDestory(uint256 _tokenId) {
-        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 10 seconds) {
+        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 8 days) {
             // now the admin can directly call the invalidated to invalidate the token
+            tokens[_tokenId].state = stages.invalidate;
+            super._burn(_tokenId);
+            emit tokendestory(_tokenId);
         }
         _;
     }
 
-    function invalidated(uint256 _tokenId) external adminOnly {
-        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 5 seconds) {
+    //admin can call this function to destroy the invalidating token
+    function invalidated(uint256 _tokenId) external adminOnly { 
+        if (tokens[_tokenId].state == stages.invalidating && block.timestamp >= tokens[_tokenId].time + 8 days) {
             tokens[_tokenId].state = stages.invalidate;
             super._burn(_tokenId);
             emit tokendestory(_tokenId);
@@ -79,12 +83,17 @@ contract LuxChain is ERC721 {
         emit mintToken(_to, _serialNumber, _supply);
     }
 
+    //When customer goes to the counter, admin could use this function to make the state of token to be invalidating
+    //If customer is the current owner, the token could be restored in 8 days using restoreToken()
+    //Or the admin could destroy the token after 8 days using invalidated()
     function invalidateToken(uint256 _tokenId) public adminOnly timedDestory(_tokenId) stateoftoken(_tokenId) {
         tokens[_tokenId].state = stages.invalidating;
         tokens[_tokenId].time = block.timestamp;
         emit invalidToken(_tokenId);
     }
 
+    //Customer could use this to report loss, and the state would be 'lost'
+    //Admin could use restoreToken to change state back to 'normal'
     function reportlost(uint256 _tokenId) public adminOrOwnerOnly(_tokenId) timedDestory(_tokenId) stateoftoken(_tokenId) {
         tokens[_tokenId].state = stages.lost;
         emit tokenLost(_tokenId);
